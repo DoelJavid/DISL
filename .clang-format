@@ -1,0 +1,19 @@
+BasedOnStyle: LLVM
+
+IndentWidth: 2
+ContinuationIndentWidth: 2
+ColumnLimit: 80
+KeepEmptyLines:
+  AtStartOfFile: false
+  AtEndOfFile: true
+  AtStartOfBlock: false
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: None
+AlignEscapedNewlines: DontAlign
+
+AllowShortFunctionsOnASingleLine: None;
+

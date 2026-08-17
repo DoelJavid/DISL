@@ -1,0 +1,56 @@
+# Written by DoelJavid.
+
+import sys
+
+AddOption(
+  "--release",
+  action="store_true",
+  dest="release",
+  default=False,
+  help="Builds the library in release mode.",
+)
+
+AddOption(
+  "--examples",
+  action="store_true",
+  dest="examples",
+  default=False,
+  help="Builds the library along with it's examples.",
+)
+
+###############################################################################
+
+global env, conf
+env = Environment(CPPPATH="include")
+conf = env.Configure()
+src=["obj/disl.c", "obj/dgl.c"]
+
+env.VariantDir("obj", "src", duplicate=False)
+
+if GetOption("release"):
+  env.Append(CCFLAGS=["-O2", "-Wall"], CPPDEFINES="NDEBUG")
+else:
+  env.Append(CCFLAGS=["-Wall"])
+
+if conf.CheckLib("X11"):
+  env.Append(LIBS="X11", CPPDEFINES="DISL_USE_XORG")
+  src.append("obj/disl-platform-xorg.c")
+
+  if conf.CheckLib("GL"):
+    env.Append(LIBS="GL", CPPDEFINES="DISL_USE_OPENGL")
+    src.append("obj/dgl-platform-xorg.c")
+
+if len(src) == 0:
+  print("This platform isn't currently supported")
+  sys.exit(1)
+
+src = src + ["obj/disl.c", "obj/dgl.c"]
+
+env.StaticLibrary(target="dist/disl", source=src)
+
+conf.Finish()
+
+if GetOption("examples"):
+  for scsub in Glob("examples/*/scsub"):
+    env.SConscript(scsub)
+

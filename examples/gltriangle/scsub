@@ -1,0 +1,18 @@
+
+env = Environment(
+  CPPPATH="../../include",
+  LIBPATH="../../dist",
+  LIBS=["disl"]
+)
+conf = env.Configure()
+
+if conf.CheckLib("X11"):
+  env.Append(LIBS="X11")
+
+  if conf.CheckLib("GL"):
+    env.Append(LIBS="GL")
+
+env.VariantDir("obj", "src", duplicate=False)
+env.Program(target="bin/example", source=Glob("obj/*.c"))
+conf.Finish()
+
