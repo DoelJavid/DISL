@@ -1,0 +1,42 @@
+name: Feature Request
+description: Request a new feature for the library.
+title: "[Feature]: "
+labels: ["enhancement"]
+type: enhancement
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this request?
+      description: Please search for an existing issue for this feature before you create an issue.
+      options:
+      - label: I have searched the existing issues
+        required: true
+
+  - type: textarea
+    attributes:
+      label: Current Problem
+      description: Describe the problem or use case you want to solve.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Feature Description
+      description: A clear description of the feature you want to implement.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Alternatives Considered
+      description: If possible, explain any alternatives to this feature that may be considered alongside their advantages and disadvantages.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Additional Details
+      description: Add any additional details about this feature here (potential steps to implement, etc.).
+    validations:
+      required: false
+

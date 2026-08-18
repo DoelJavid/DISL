@@ -1,0 +1,58 @@
+name: Bug Report
+description: Report a bug / issue in the library.
+title: "[Bug]: "
+labels: ["bug"]
+type: bug
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this request?
+      description: Please search for an existing issue for this bug before you create an issue.
+      options:
+      - label: I have searched the existing issues
+        required: true
+
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of the bug you're experiencing.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A clear description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: The steps to take to reproduce the bug.
+      placeholder: |
+        1. Do X, Y, Z.
+        2. Build the project.
+        3. Run.
+        4. Do X, Y, Z to reproduce bug.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Environment
+      description: The current platform your running, and hardware specs if needed.
+      placeholder: |
+        OS: Ubuntu 20.04
+        CPU: AMD Ryzen 7 7735HS
+        RAM: 16GB RAM
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Additional Details
+      description: Add any additional details or information about this bug here (potential steps to fix, etc.).
+    validations:
+      required: false
+
