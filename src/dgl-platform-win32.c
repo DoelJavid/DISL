@@ -6,7 +6,6 @@
 
 #include "dgl-platform-win32.h"
 #include "disl-platform-win32.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <windows.h>

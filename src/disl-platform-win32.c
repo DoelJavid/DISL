@@ -5,7 +5,6 @@
 */
 
 #include "disl-platform-win32.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -334,7 +333,6 @@ DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, D
 
     globalWindowClass = RegisterClassExA(&windowClass);
     if (!globalWindowClass) {
-      printf("Failed to register class\n");
       free(handle);
       return NULL;
     }
@@ -355,13 +353,11 @@ DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, D
     NULL
   );
   if (!handle->hwnd) {
-    printf("Failed to create window\n");
     free(handle);
     return NULL;
   }
 
   if (!SetPropA(handle->hwnd, "DISLDisplay", (HANDLE)handle)) {
-    printf("Failed to set prop\n");
     free(handle);
     return NULL;
   }

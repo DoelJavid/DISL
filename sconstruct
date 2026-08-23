@@ -62,7 +62,8 @@ env.StaticLibrary(target="dist/disl", source=src)
 if GetOption("examples"):
   Export("env")
 
-  env.StaticLibrary(target="dist/glad", source="ext/glad/src/gl.c")
+  env.VariantDir("obj/glad/", "ext/glad/src", duplicate=False)
+  env.StaticLibrary(target="dist/glad", source="obj/glad/gl.c")
   env.Append(
     CPPPATH=["include/", "ext/glad/include/"],
     LIBPATH="dist/",
