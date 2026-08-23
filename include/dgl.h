@@ -45,16 +45,21 @@ DGLContext* dglCreateContext(DISLDisplay* display, DGLConfig* conf);
   Makes the given OpenGL context current for the given display, allowing you to
   use it.
 */
-#define dglMakeCurrent(display, context) _dgl->makeCurrent(display, context)
+#define dglMakeCurrent _dgl->makeCurrent
+
+/**
+  Loads the OpenGL process with the given name.
+*/
+#define dglGetProcAddress _dgl->getProcAddress
 
 /**
   Swaps the display's buffers, displaying anything drawn by OpenGL.
 */
-#define dglSwapBuffers(display) _dgl->swapBuffers(display)
+#define dglSwapBuffers _dgl->swapBuffers
 
 /**
   Deletes the given OpenGL context.
 */
-#define dglDeleteContext(context) _dgl->deleteContext(context)
+#define dglDeleteContext _dgl->deleteContext
 
 #endif
