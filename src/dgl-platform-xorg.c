@@ -9,6 +9,7 @@
 #include "dgl-platform-xorg.h"
 #include "disl-platform-xorg.h"
 #include <stdlib.h>
+#include <string.h>
 #include <GL/glx.h>
 #include <GL/glxext.h>
 
@@ -51,8 +52,14 @@ DGLContext* _dglCreateContextXorg(DISLDisplay* display, DGLConfig* conf) {
     visualAttribs,
     &confCount
   );
-  if (!fbConfs || confCount < 1)
+
+  if (!fbConfs)
     return NULL;
+
+  if (confCount < 1) {
+    XFree(fbConfs);
+    return NULL;
+  }
 
   int bestFbIdx = -1;
   int bestSampleCount = -1;
@@ -73,9 +80,9 @@ DGLContext* _dglCreateContextXorg(DISLDisplay* display, DGLConfig* conf) {
         bestFbIdx = i;
         bestSampleCount = samples;
       }
-    }
 
-    XFree(visualInfo);
+      XFree(visualInfo);
+    }
   }
   GLXFBConfig bestFbConf = fbConfs[bestFbIdx];
   XFree(fbConfs);
