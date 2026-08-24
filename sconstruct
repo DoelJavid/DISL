@@ -30,8 +30,7 @@ env.VariantDir("obj", "src", duplicate=False)
 if GetOption("release"):
   env.Append(CCFLAGS=["-O2", "-Wall"], CPPDEFINES="NDEBUG")
 else:
-  pass
-  #env.Append(CCFLAGS=["-Wall"])
+  env.Append(CCFLAGS=["-Wall"])
 
 # Xlib Backend
 if conf.CheckLib("X11"):
@@ -69,6 +68,10 @@ if GetOption("examples"):
     LIBPATH="dist/",
     LIBS=["disl", "glad"]
   )
+
+  # NOTE: Linux requires the m library to use math functions.
+  if conf.CheckLib("m"):
+    env.Append(LIBS="m")
 
   for scsub in Glob("examples/*/scsub"):
     env.SConscript(scsub)

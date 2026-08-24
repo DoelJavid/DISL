@@ -665,6 +665,5 @@ void _dislCloseDisplayXorg(DISLDisplay* display) {
 
   XFlush(handle->display);
   free(handle);
-  display->active = false;
 }
 

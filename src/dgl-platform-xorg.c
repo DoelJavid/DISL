@@ -61,6 +61,7 @@ DGLContext* _dglCreateContextXorg(DISLDisplay* display, DGLConfig* conf) {
       handle->display,
       fbConfs[i]
     );
+
     if (visualInfo) {
       int sampleBuffer, samples;
       glXGetFBConfigAttrib(
@@ -73,6 +74,8 @@ DGLContext* _dglCreateContextXorg(DISLDisplay* display, DGLConfig* conf) {
         bestSampleCount = samples;
       }
     }
+
+    XFree(visualInfo);
   }
   GLXFBConfig bestFbConf = fbConfs[bestFbIdx];
   XFree(fbConfs);
@@ -91,9 +94,8 @@ DGLContext* _dglCreateContextXorg(DISLDisplay* display, DGLConfig* conf) {
   static PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = NULL;
   if (!glXCreateContextAttribsARB) {
     glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)
-      glXGetProcAddressARB(
-        (const GLubyte*)"glXCreateContextAttribsARB"
-      );
+      _dglGetProcAddressXorg("glXCreateContextAttribsARB");
+
     if (!glXCreateContextAttribsARB)
       return NULL;
   }
@@ -122,7 +124,11 @@ DGLProc _dglGetProcAddressXorg(const char* processName) {
 bool _dglMakeCurrentXorg(DISLDisplay* display, DGLContext* context) {
   _DISLDisplayXorg* handle = (_DISLDisplayXorg*)display;
   DGLXContext* xcontext = (DGLXContext*)context;
-  return glXMakeCurrent(handle->display, handle->window, xcontext->context);
+  return glXMakeCurrent(
+    handle ? handle->display : NULL,
+    handle ? handle->window : None,
+    xcontext ? xcontext->context : NULL
+  );
 }
 
 void _dglSwapBuffersXorg(DISLDisplay* display) {

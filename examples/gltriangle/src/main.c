@@ -12,6 +12,20 @@ static DISLDisplay* display = NULL;
 static DGLContext* context = NULL;
 static double rotation = 0.0;
 
+
+
+void onResize(DISLDisplay* display, DISLTransform transform) {
+  printf("New size: %d, %d\n", transform.width, transform.height);
+  glViewport(0, 0, transform.width, transform.height);
+}
+
+void onKeyAction(DISLDisplay* display, DISL_KEYCODE keycode, bool pressed) {
+  if (pressed)
+    printf("Key %d pressed\n", (int)keycode);
+}
+
+
+
 void draw() {
   rotation += 0.003;
 
@@ -34,23 +48,15 @@ void draw() {
   dglSwapBuffers(display);
 }
 
-void keyProc(DISLDisplay* display, DISL_KEYCODE keycode, bool pressed) {
-  if (pressed)
-    printf("Key %d pressed\n", (int)keycode);
-}
-
-void transformProc(DISLDisplay* display, DISLTransform transform) {
-  printf("New size: %d, %d\n", transform.width, transform.height);
-  glViewport(0, 0, transform.width, transform.height);
-}
-
-int close(int code) {
+int cleanup(int code) {
+  printf("Cleaning up...\n");
   if (context) {
     dglMakeCurrent(NULL, NULL);
     dglDeleteContext(context);
     context = NULL;
   }
   if (display) {
+    printf("Closing display\n");
     dislCloseDisplay(display);
     display = NULL;
   }
@@ -68,7 +74,7 @@ int main() {
     hooks
   );
   if (!display)
-    return close(1);
+    return cleanup(1);
   printf("Opened display\n");
 
   DGLConfig config = (DGLConfig){
@@ -85,16 +91,16 @@ int main() {
   };
   context = dglCreateContext(display, &config);
   if (!context)
-    return close(2);
+    return cleanup(2);
 
   if (!dglMakeCurrent(display, context))
-    return close(3);
+    return cleanup(3);
 
   if (!gladLoadGL((GLADloadfunc)(dglGetProcAddress)))
-    return close(4);
+    return cleanup(4);
 
-  display->hooks.resize = transformProc;
-  display->hooks.key = keyProc;
+  display->hooks.resize = onResize;
+  display->hooks.key = onKeyAction;
 
   glViewport(0, 0, 800, 600);
   draw();
@@ -105,6 +111,6 @@ int main() {
     dislPollEvents(display);
   }
 
-  return close(0);
+  return cleanup(0);
 }
 

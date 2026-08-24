@@ -7,6 +7,43 @@
 static DISLDisplay* display = NULL;
 static DGLContext* context = NULL;
 
+
+
+void onResize(DISLDisplay* display, DISLTransform transform) {
+  glViewport(0, 0, transform.width, transform.height);
+}
+
+void onKeyAction(DISLDisplay* display, DISL_KEYCODE keycode, bool pressed) {
+  DISL_FLAGS activeFlags = dislGetDisplayFlags(display);
+  if (pressed) {
+    switch (keycode) {
+    case DISL_KEYCODE_1:
+      activeFlags ^= DISL_FLAG_MINIMIZED;
+      dislSetDisplayFlags(display, activeFlags);
+      printf("Display minimized\n");
+      break;
+    case DISL_KEYCODE_2:
+      activeFlags ^= DISL_FLAG_MAXIMIZED;
+      dislSetDisplayFlags(display, activeFlags);
+      printf("Display maximized\n");
+      break;
+    case DISL_KEYCODE_3:
+      activeFlags ^= DISL_FLAG_BORDERLESS;
+      dislSetDisplayFlags(display, activeFlags);
+      printf("Borderless display toggled\n");
+      break;
+    case DISL_KEYCODE_4:
+      activeFlags ^= DISL_FLAG_FULLSCREEN;
+      dislSetDisplayFlags(display, activeFlags);
+      printf("Fullscreen toggled\n");
+      break;
+    default: break;
+    }
+  }
+}
+
+
+
 void drawRect(
   double x, double y,
   double width, double height,
@@ -84,40 +121,7 @@ void draw() {
   dglSwapBuffers(display);
 }
 
-void keyProc(DISLDisplay* display, DISL_KEYCODE keycode, bool pressed) {
-  DISL_FLAGS activeFlags = dislGetDisplayFlags(display);
-  if (pressed) {
-    switch (keycode) {
-    case DISL_KEYCODE_1:
-      activeFlags ^= DISL_FLAG_MINIMIZED;
-      dislSetDisplayFlags(display, activeFlags);
-      printf("Display minimized\n");
-      break;
-    case DISL_KEYCODE_2:
-      activeFlags ^= DISL_FLAG_MAXIMIZED;
-      dislSetDisplayFlags(display, activeFlags);
-      printf("Display maximized\n");
-      break;
-    case DISL_KEYCODE_3:
-      activeFlags ^= DISL_FLAG_BORDERLESS;
-      dislSetDisplayFlags(display, activeFlags);
-      printf("Borderless display toggled\n");
-      break;
-    case DISL_KEYCODE_4:
-      activeFlags ^= DISL_FLAG_FULLSCREEN;
-      dislSetDisplayFlags(display, activeFlags);
-      printf("Fullscreen toggled\n");
-      break;
-    default: break;
-    }
-  }
-}
-
-void transformProc(DISLDisplay* display, DISLTransform transform) {
-  glViewport(0, 0, transform.width, transform.height);
-}
-
-int close(int code) {
+int cleanup(int code) {
   if (context) {
     dglMakeCurrent(NULL, NULL);
     dglDeleteContext(context);
@@ -141,7 +145,7 @@ int main() {
     hooks
   );
   if (!display)
-    return close(1);
+    return cleanup(1);
   printf("Opened display\n");
 
   DGLConfig config = (DGLConfig){
@@ -158,16 +162,16 @@ int main() {
   };
   context = dglCreateContext(display, &config);
   if (!context)
-    return close(2);
+    return cleanup(2);
 
   if (!dglMakeCurrent(display, context))
-    return close(3);
+    return cleanup(3);
 
   if (!gladLoadGL((GLADloadfunc)(dglGetProcAddress)))
-    return close(4);
+    return cleanup(4);
 
-  display->hooks.resize = transformProc;
-  display->hooks.key = keyProc;
+  display->hooks.resize = onResize;
+  display->hooks.key = onKeyAction;
 
   glViewport(0, 0, 800, 600);
   draw();
@@ -178,6 +182,6 @@ int main() {
     dislPollEvents(display);
   }
 
-  return close(0);
+  return cleanup(0);
 }
 
