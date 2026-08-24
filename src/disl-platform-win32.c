@@ -319,7 +319,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks hooks) {
+DISLDisplay* _dislOpenDisplayWin32(const char* title, int x, int y, int width, int height) {
   _DISLDisplayWin32* handle = (_DISLDisplayWin32*)calloc(1, sizeof(_DISLDisplayWin32));
 
   if (!globalWindowClass) {
@@ -342,11 +342,11 @@ DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, D
     WS_EX_APPWINDOW,
     "_DISLDisplayClass_",
     title,
-    _flagsToWin32Style(flags),
-    transform.x >= 0 ? transform.x : CW_USEDEFAULT,
-    transform.y >= 0 ? transform.y : CW_USEDEFAULT,
-    transform.width >= 0 ? transform.width : CW_USEDEFAULT,
-    transform.height >= 0 ? transform.height : CW_USEDEFAULT,
+    0,
+    x >= 0 ? x : CW_USEDEFAULT,
+    y >= 0 ? y : CW_USEDEFAULT,
+    width >= 0 ? width : CW_USEDEFAULT,
+    height >= 0 ? height : CW_USEDEFAULT,
     NULL,
     NULL,
     GetModuleHandle(NULL),
@@ -362,17 +362,15 @@ DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, D
     return NULL;
   }
 
-  if (flags & DISL_FLAG_SHOWN) {
-    ShowWindow(handle->hwnd, SW_SHOW);
-    UpdateWindow(handle->hwnd);
-  }
-
   handle->hdc = GetDC(handle->hwnd);
   handle->internal.pub.active = true;
-  handle->internal.pub.hooks = hooks;
   handle->internal.title = title;
-  handle->internal.transform = transform;
-  handle->internal.flags = flags;
+  handle->internal.transform = (DISLTransform){
+    .x = x,
+    .y = y,
+    .width = width,
+    .height = height
+  };
   return (DISLDisplay*)handle;
 }
 
@@ -382,21 +380,17 @@ void _dislRetitleDisplayWin32(DISLDisplay* display, const char* title) {
     handle->internal.title = title;
 }
 
-void _dislTransformDisplayWin32(DISLDisplay* display, DISLTransform transform) {
+void _dislTransformDisplayWin32(DISLDisplay* display, int x, int y, int width, int height) {
   _DISLDisplayWin32* handle = (_DISLDisplayWin32*)display;
-  DISLTransform internalTransform = handle->internal.transform;
-  transform = (DISLTransform){
-    .x = transform.x >= 0 ? transform.x : internalTransform.x,
-    .y = transform.y >= 0 ? transform.y : internalTransform.y,
-    .width = transform.width >= 0 ? transform.width : internalTransform.width,
-    .height = transform.height >= 0 ? transform.height : internalTransform.height
-  };
+  DISLTransform transform = handle->internal.transform;
+  transform.x = x >= 0 ? x : transform.x;
+  transform.y = y >= 0 ? y : transform.y;
+  transform.width = width >= 0 ? width : transform.width;
+  transform.height = height >= 0 ? height : transform.height;
   MoveWindow(
     handle->hwnd,
-    transform.x,
-    transform.y,
-    transform.width,
-    transform.height,
+    transform.x, transform.y,
+    transform.width, transform.height,
     true
   );
   handle->internal.transform = transform;

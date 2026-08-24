@@ -22,9 +22,9 @@ typedef struct {
   HDC hdc;
 } _DISLDisplayWin32;
 
-DISLDisplay* _dislOpenDisplayWin32(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks procs);
+DISLDisplay* _dislOpenDisplayWin32(const char* title, int x, int y, int width, int height);
 void _dislRetitleDisplayWin32(DISLDisplay* display, const char* title);
-void _dislTransformDisplayWin32(DISLDisplay* display, DISLTransform transform);
+void _dislTransformDisplayWin32(DISLDisplay* display, int x, int y, int width, int height);
 void _dislSetDisplayFlagsWin32(DISLDisplay* display, DISL_FLAGS flags);
 void _dislPollEventsWin32(DISLDisplay* display);
 void _dislCloseDisplayWin32(DISLDisplay* display);
