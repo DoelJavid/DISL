@@ -249,31 +249,31 @@ DISL_FLAGS dislGetDisplayFlags(DISLDisplay* display);
   certain settings within the display, like whether or not the display can be
   resized, or to make the window borderless.
 */
-#define dislRetitleDisplay(display, title) _disl->setDisplayTitle(display, title)
+#define dislRetitleDisplay _disl->retitleDisplay
 
 /**
   Moves and/or resizes the given display using the given transform struct. If
   any transform component is negative, that component will be ignored.
 */
-#define dislTransformDisplay(display, transform) _disl->transformDisplay(display, transform)
+#define dislTransformDisplay _disl->transformDisplay
 
 /**
   Applies the given display flags within the given display. This can be used to
   toggle certain settings within the display, like whether or not the display
   can be resized, or to make the window borderless.
 */
-#define dislSetDisplayFlags(display, flags) _disl->setDisplayFlags(display, flags)
+#define dislSetDisplayFlags _disl->setDisplayFlags
 
 /**
   Polls the display for any incoming events, then fires each event's dedicated
   hook. Event hooks can be set through the `hooks` property within the display
   struct.
 */
-#define dislPollEvents(display) _disl->pollEvents(display)
+#define dislPollEvents _disl->pollEvents
 
 /**
   Closes the given display, freeing all resources related to it.
 */
-#define dislCloseDisplay(display) _disl->closeDisplay(display)
+#define dislCloseDisplay _disl->closeDisplay
 
 #endif

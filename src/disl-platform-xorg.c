@@ -660,11 +660,10 @@ void _dislCloseDisplayXorg(DISLDisplay* display) {
   if (handle->window) {
     XUnmapWindow(handle->display, handle->window);
     XDestroyWindow(handle->display, handle->window);
-    handle->window = (Window)0;
   }
 
   XFlush(handle->display);
+  XCloseDisplay(handle->display);
   free(handle);
-  display->active = false;
 }
 

@@ -23,7 +23,7 @@ AddOption(
 global env, conf
 env = Environment(CPPPATH="include")
 conf = env.Configure()
-src=["obj/disl.c", "obj/dgl.c"]
+src = []
 
 env.VariantDir("obj", "src", duplicate=False)
 
@@ -32,6 +32,7 @@ if GetOption("release"):
 else:
   env.Append(CCFLAGS=["-Wall"])
 
+# Xlib Backend
 if conf.CheckLib("X11"):
   env.Append(LIBS="X11", CPPDEFINES="DISL_USE_XORG")
   src.append("obj/disl-platform-xorg.c")
@@ -39,6 +40,15 @@ if conf.CheckLib("X11"):
   if conf.CheckLib("GL"):
     env.Append(LIBS="GL", CPPDEFINES="DISL_USE_OPENGL")
     src.append("obj/dgl-platform-xorg.c")
+
+# Win32 Backend
+if conf.CheckLib("user32"):
+  env.Append(LIBS=["user32"], CPPDEFINES="DISL_USE_WIN32")
+  src.append("obj/disl-platform-win32.c")
+
+  if conf.CheckLib("gdi32") and conf.CheckLib("opengl32"):
+    env.Append(LIBS=["gdi32", "opengl32"], CPPDEFINES="DISL_USE_OPENGL")
+    src.append("obj/dgl-platform-win32.c")
 
 if len(src) == 0:
   print("This platform isn't currently supported")
@@ -48,9 +58,21 @@ src = src + ["obj/disl.c", "obj/dgl.c"]
 
 env.StaticLibrary(target="dist/disl", source=src)
 
-conf.Finish()
-
 if GetOption("examples"):
+  Export("env")
+
+  env.VariantDir("obj/glad/", "ext/glad/src", duplicate=False)
+  env.StaticLibrary(target="dist/glad", source="obj/glad/gl.c")
+  env.Append(
+    CPPPATH=["include/", "ext/glad/include/"],
+    LIBPATH="dist/",
+    LIBS=["disl", "glad"]
+  )
+
+  # NOTE: Linux requires the m library to use math functions.
+  if conf.CheckLib("m"):
+    env.Append(LIBS="m")
+
   for scsub in Glob("examples/*/scsub"):
     env.SConscript(scsub)
 

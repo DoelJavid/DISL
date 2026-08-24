@@ -29,7 +29,11 @@ DISLDisplay* dislOpenDisplay(const char* title, DISLTransform transform, DISL_FL
   DISLDisplay* display = NULL;
 
   #ifdef DISL_USE_WIN32
-  // Not implemented yet...
+  display = _dislOpenDisplayWin32(title, transform, flags, hooks);
+  if (display) {
+    _dislBackend = DISL_BACKEND_WIN32;
+    _disl = &_win32Platform;
+  }
   #endif
 
   #ifdef DISL_USE_XORG
