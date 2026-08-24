@@ -49,14 +49,12 @@ void draw() {
 }
 
 int cleanup(int code) {
-  printf("Cleaning up...\n");
   if (context) {
     dglMakeCurrent(NULL, NULL);
     dglDeleteContext(context);
     context = NULL;
   }
   if (display) {
-    printf("Closing display\n");
     dislCloseDisplay(display);
     display = NULL;
   }
@@ -66,16 +64,9 @@ int cleanup(int code) {
 
 
 int main() {
-  DISLHooks hooks = {0};
-  display = dislOpenDisplay(
-    "DGL Triangle",
-    (DISLTransform){-1, -1, 800, 600},
-    0,
-    hooks
-  );
+  display = dislOpenDisplay("DGL Triangle", -1, -1, 800, 600);
   if (!display)
     return cleanup(1);
-  printf("Opened display\n");
 
   DGLConfig config = (DGLConfig){
     .glMajor = 1,

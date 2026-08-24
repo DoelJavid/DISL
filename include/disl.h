@@ -207,9 +207,9 @@ struct DISLDisplay {
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct {
-  DISLDisplay* (*openDisplay)(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks procs);
+  DISLDisplay* (*openDisplay)(const char* title, int x, int y, int width, int height);
   void (*retitleDisplay)(DISLDisplay* display, const char* title);
-  void (*transformDisplay)(DISLDisplay* display, DISLTransform transform);
+  void (*transformDisplay)(DISLDisplay* display, int x, int y, int width, int height);
   void (*setDisplayFlags)(DISLDisplay* display, DISL_FLAGS flags);
   void (*pollEvents)(DISLDisplay* display);
   void (*closeDisplay)(DISLDisplay* display);
@@ -227,7 +227,7 @@ DISL_BACKEND dislGetDisplayBackend();
   currently active, this function will automatically select a backend based on
   the current platform.
 */
-DISLDisplay* dislOpenDisplay(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks procs);
+DISLDisplay* dislOpenDisplay(const char* title, int x, int y, int width, int height);
 
 /**
   Retrieves the title of the given display.

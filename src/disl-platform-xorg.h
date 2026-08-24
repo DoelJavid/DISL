@@ -20,9 +20,9 @@ typedef struct {
   Window window;
 } _DISLDisplayXorg;
 
-DISLDisplay* _dislOpenDisplayXorg(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks procs);
+DISLDisplay* _dislOpenDisplayXorg(const char* title, int x, int y, int width, int height);
 void _dislRetitleDisplayXorg(DISLDisplay* display, const char* title);
-void _dislTransformDisplayXorg(DISLDisplay* display, DISLTransform transform);
+void _dislTransformDisplayXorg(DISLDisplay* display, int x, int y, int width, int height);
 void _dislSetDisplayFlagsXorg(DISLDisplay* display, DISL_FLAGS flags);
 void _dislPollEventsXorg(DISLDisplay* display);
 void _dislCloseDisplayXorg(DISLDisplay* display);

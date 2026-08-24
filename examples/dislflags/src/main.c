@@ -137,16 +137,9 @@ int cleanup(int code) {
 
 
 int main() {
-  DISLHooks hooks = {0};
-  display = dislOpenDisplay(
-    "DGL Flag Test",
-    (DISLTransform){-1, -1, 800, 600},
-    0,
-    hooks
-  );
+  display = dislOpenDisplay("DGL Flag Test", -1, -1, 800, 600);
   if (!display)
     return cleanup(1);
-  printf("Opened display\n");
 
   DGLConfig config = (DGLConfig){
     .glMajor = 1,

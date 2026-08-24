@@ -280,12 +280,7 @@ static bool _isXWindowFullscreen(_DISLDisplayXorg* handle) {
 // Public Platform Functions
 ///////////////////////////////////////////////////////////////////////////////
 
-DISLDisplay* _dislOpenDisplayXorg(
-  const char* title,
-  DISLTransform transform,
-  DISL_FLAGS flags,
-  DISLHooks hooks
-) {
+DISLDisplay* _dislOpenDisplayXorg(const char* title, int x, int y, int width, int height) {
   assert(title != NULL);
 
   _DISLDisplayXorg* handle = (_DISLDisplayXorg*)calloc(1, sizeof(_DISLDisplayXorg));
@@ -296,6 +291,13 @@ DISLDisplay* _dislOpenDisplayXorg(
   }
 
   handle->root = XDefaultRootWindow(handle->display);
+
+  DISLTransform transform = (DISLTransform){
+    .x = x > 0 ? x : 0,
+    .y = y > 0 ? y : 0,
+    .width = width > 0 ? width : 0,
+    .height = height > 0 ? height : 0
+  };
 
   XSetWindowAttributes windowAttribs;
   windowAttribs.override_redirect = False;
@@ -338,10 +340,8 @@ DISLDisplay* _dislOpenDisplayXorg(
   XSetWMProtocols(handle->display, handle->window, &WM_DELETE_WINDOW, 1);
 
   handle->shared.pub.active = true;
-  handle->shared.pub.hooks = hooks;
   handle->shared.title = title;
   handle->shared.transform = transform;
-  _dislSetDisplayFlagsXorg((DISLDisplay*)handle, flags);
   return (DISLDisplay*)handle;
 }
 
@@ -351,17 +351,23 @@ void _dislRetitleDisplayXorg(DISLDisplay* display, const char* title) {
   handle->shared.title = title;
 }
 
-void _dislTransformDisplayXorg(DISLDisplay* display, DISLTransform transform) {
+void _dislTransformDisplayXorg(DISLDisplay* display, int x, int y, int width, int height) {
   _DISLDisplayXorg* handle = (_DISLDisplayXorg*)display;
   XWindowAttributes attribs;
   XGetWindowAttributes(handle->display, handle->window, &attribs);
+
+  DISLTransform transform = (DISLTransform){
+    .x = x >= 0 ? x : attribs.x,
+    .y = y >= 0 ? y : attribs.y,
+    .width = width >= 0 ? width : attribs.width,
+    .height = height >= 0 ? height : attribs.height
+  };
+
   XMoveResizeWindow(
     handle->display,
     handle->window,
-    transform.x >= 0 ? transform.x : attribs.x,
-    transform.y >= 0 ? transform.y : attribs.y,
-    transform.width >= 0 ? transform.width : attribs.width,
-    transform.height >= 0 ? transform.height : attribs.height
+    transform.x, transform.y,
+    transform.width, transform.height
   );
   handle->shared.transform = transform;
 }

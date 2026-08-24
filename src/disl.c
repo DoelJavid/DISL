@@ -22,14 +22,14 @@ DISL_BACKEND dislGetDisplayBackend() {
   return _dislBackend;
 }
 
-DISLDisplay* dislOpenDisplay(const char* title, DISLTransform transform, DISL_FLAGS flags, DISLHooks hooks) {
+DISLDisplay* dislOpenDisplay(const char* title, int x, int y, int width, int height) {
   if (_disl)
-    return _disl->openDisplay(title, transform, flags, hooks);
+    return _disl->openDisplay(title, x, y, width, height);
 
   DISLDisplay* display = NULL;
 
   #ifdef DISL_USE_WIN32
-  display = _dislOpenDisplayWin32(title, transform, flags, hooks);
+  display = _dislOpenDisplayWin32(title, x, y, width, height);
   if (display) {
     _dislBackend = DISL_BACKEND_WIN32;
     _disl = &_win32Platform;
@@ -37,7 +37,7 @@ DISLDisplay* dislOpenDisplay(const char* title, DISLTransform transform, DISL_FL
   #endif
 
   #ifdef DISL_USE_XORG
-  display = _dislOpenDisplayXorg(title, transform, flags, hooks);
+  display = _dislOpenDisplayXorg(title, x, y, width, height);
   if (display) {
     _dislBackend = DISL_BACKEND_XORG;
     _disl = &_xorgPlatform;
